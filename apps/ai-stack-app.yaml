@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/JOUW-GEBRUIKERSNAAM/JOUW-GITOPS-REPO.git'
+    repoURL: 'https://github.com/EIZZO1/test-llm.git'
     targetRevision: main
     path: manifests/ai-stack
   destination:
