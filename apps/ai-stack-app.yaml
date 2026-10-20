@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/EIZZO1/test-llm.git'
     targetRevision: main
-    path: manifests/ai-stack
+    path: manifests
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:
