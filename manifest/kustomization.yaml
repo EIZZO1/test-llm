@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - 00-argocd-rbac.yaml
   - 01-operators.yaml
   - 02-dsc-init.yaml
   - 03-cpu-llm-serving.yaml
