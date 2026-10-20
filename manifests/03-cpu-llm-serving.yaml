@@ -24,6 +24,8 @@ spec:
     - name: gguf
       version: "1"
       autoSelect: true
+  protocolVersions:
+    - v1
   multiModel: false
   containers:
     - name: kserve-container
@@ -39,7 +41,7 @@ spec:
         - --port
         - "8080"
         - --threads
-        - "8" # Pas aan naar het aantal fysieke CPU cores dat je wilt toewijzen
+        - "4"
       ports:
         - containerPort: 8080
           protocol: TCP
@@ -48,8 +50,8 @@ spec:
           mountPath: /models
       resources:
         requests:
-          cpu: "4"
-          memory: "6Gi"
+          cpu: "1"
+          memory: "2Gi"
         limits:
           cpu: "8"
           memory: "8Gi"
@@ -71,6 +73,9 @@ metadata:
     opendatahub.io/dashboard: "true"
 spec:
   predictor:
+    volumes:
+      - name: model-volume
+        emptyDir: {}
     model:
       modelFormat:
         name: gguf
@@ -85,7 +90,7 @@ spec:
           - |
             if [ ! -f /models/model.gguf ]; then
               echo "Downloading Qwen2.5-1.5B-Instruct GGUF for CPU testing..."
-              curl -L -o /models/model.gguf https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf
+              curl -sSfL -o /models/model.gguf.tmp https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf && mv /models/model.gguf.tmp /models/model.gguf
             fi
         volumeMounts:
           - name: model-volume

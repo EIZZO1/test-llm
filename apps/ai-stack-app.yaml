@@ -11,10 +11,25 @@ spec:
     path: manifests
   destination:
     server: 'https://kubernetes.default.svc'
+    namespace: default
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - SkipDryRunOnMissingResource=true # Cruciaal omdat CRD's pas in Wave 1 worden aangemaakt
+      - SkipDryRunOnMissingResource=true
+      - ApplyOutOfSyncOnly=true
+  ignoreDifferences:
+    - group: operators.coreos.com
+      kind: Subscription
+      jsonPointers:
+        - /spec/startingCSV
+        - /status
+    - group: operators.coreos.com
+      kind: ClusterServiceVersion
+      jsonPointers:
+        - /metadata/annotations
+        - /metadata/labels
+        - /spec/install
+        - /status

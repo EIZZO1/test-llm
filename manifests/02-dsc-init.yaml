@@ -25,53 +25,27 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   components:
-    aigateway:
-      modelsAsAService:
-        managementState: Removed
-    aipipelines:
-      argoWorkflowsControllers:
-        managementState: Removed
+    codeflare:
       managementState: Removed
     dashboard:
       managementState: Managed
-    feastoperator:
+    datasciencepipelines:
       managementState: Removed
     kserve:
       managementState: Managed
-      modelCache:
-        managementState: Removed
-      modelsAsService:
-        managementState: Removed
-      nim:
-        airGapped: false
-        managementState: Removed
-      rawDeploymentServiceConfig: Headless
-      wva:
+      defaultDeploymentMode: RawDeployment
+      serving:
         managementState: Removed
     kueue:
       managementState: Removed
-    llamastackoperator:
-      managementState: Removed
-    mlflowoperator:
-      managementState: Removed
-    modelregistry:
-      managementState: Removed
-      registriesNamespace: rhoai-model-registries
-    ogx:
+    modelmeshserving:
       managementState: Removed
     ray:
-      managementState: Removed
-    sparkoperator:
-      managementState: Removed
-    trainer:
-      managementState: Removed
-    trainingoperator:
       managementState: Removed
     trustyai:
       managementState: Removed
     workbenches:
       managementState: Removed
-      workbenchNamespace: rhods-notebooks
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -113,22 +87,25 @@ metadata:
   name: wait-for-kserve-crds
   namespace: redhat-ods-operator
   annotations:
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/sync-wave: "2"
-    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,BeforeHookCreation
 spec:
+  activeDeadlineSeconds: 600
+  backoffLimit: 3
   template:
     spec:
       serviceAccountName: kserve-crd-waiter
       restartPolicy: OnFailure
       containers:
         - name: waiter
-          image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+          image: quay.io/openshift/origin-cli:latest
           command:
             - /bin/sh
             - -c
             - |
               echo "Wachten tot KServe CRDs zijn geregistreerd door OpenShift AI..."
-              until oc get crd inferenceservices.serving.kserve.io servingruntimes.serving.kserve.io >/dev/null 2>&1; do
+              until oc get crd inferenceservices.serving.kserve.io servingruntimes.serving.kserve.io >/dev/null 2>&1 || kubectl get crd inferenceservices.serving.kserve.io servingruntimes.serving.kserve.io >/dev/null 2>&1; do
                 echo "CRDs nog niet aanwezig, wacht 5 seconden..."
                 sleep 5
               done
