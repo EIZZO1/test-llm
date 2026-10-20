@@ -91,7 +91,9 @@ metadata:
   namespace: openshift-lightspeed
   annotations:
     argocd.argoproj.io/sync-wave: "1"
-spec: {}
+spec:
+  targetNamespaces:
+    - openshift-lightspeed
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
