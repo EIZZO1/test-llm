@@ -1,5 +1,5 @@
 ---
-apiVersion: dscinitialization.opendatahub.io/v1
+apiVersion: dscinitialization.opendatahub.io/v2
 kind: DSCInitialization
 metadata:
   name: default-dsci
@@ -20,7 +20,7 @@ spec:
   trustedCABundle:
     managementState: Managed
 ---
-apiVersion: datasciencecluster.opendatahub.io/v1
+apiVersion: datasciencecluster.opendatahub.io/v2
 kind: DataScienceCluster
 metadata:
   name: default-dsc
@@ -35,6 +35,8 @@ spec:
       managementState: Managed
     datasciencepipelines:
       managementState: Removed
+    feastoperator:
+      managementState: Removed
     kserve:
       managementState: Managed
       serving:
@@ -45,9 +47,19 @@ spec:
         name: knative-serving
     kueue:
       managementState: Removed
+    llamastackoperator:
+      managementState: Removed
+    mlflowoperator:
+      managementState: Removed
     modelmeshserving:
       managementState: Removed
+    modelregistry:
+      managementState: Removed
+    ogx:
+      managementState: Removed
     ray:
+      managementState: Removed
+    trainer:
       managementState: Removed
     trainingoperator:
       managementState: Removed
