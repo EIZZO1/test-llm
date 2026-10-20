@@ -9,14 +9,10 @@ metadata:
 spec:
   applicationsNamespace: redhat-ods-applications
   monitoring:
-    managementState: Managed
+    managementState: Removed
     namespace: redhat-ods-monitoring
   serviceMesh:
-    controlPlane:
-      metricsCollection: Istio
-      name: data-science-smcp
-      namespace: istio-system
-    managementState: Managed
+    managementState: Removed
   trustedCABundle:
     managementState: Managed
 ---
@@ -29,35 +25,43 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   components:
-    codeflare:
+    aigateway:
+      modelsAsAService:
+        managementState: Removed
+    aipipelines:
+      argoWorkflowsControllers:
+        managementState: Removed
       managementState: Removed
     dashboard:
       managementState: Managed
-    datasciencepipelines:
-      managementState: Removed
     feastoperator:
       managementState: Removed
     kserve:
       managementState: Managed
-      serving:
-        ingressGateway:
-          certificate:
-            type: SelfSigned
-        managementState: Managed
-        name: knative-serving
+      modelCache:
+        managementState: Removed
+      modelsAsService:
+        managementState: Removed
+      nim:
+        airGapped: false
+        managementState: Removed
+      rawDeploymentServiceConfig: Headless
+      wva:
+        managementState: Removed
     kueue:
       managementState: Removed
     llamastackoperator:
       managementState: Removed
     mlflowoperator:
       managementState: Removed
-    modelmeshserving:
-      managementState: Removed
     modelregistry:
       managementState: Removed
+      registriesNamespace: rhoai-model-registries
     ogx:
       managementState: Removed
     ray:
+      managementState: Removed
+    sparkoperator:
       managementState: Removed
     trainer:
       managementState: Removed
@@ -67,3 +71,65 @@ spec:
       managementState: Removed
     workbenches:
       managementState: Removed
+      workbenchNamespace: rhods-notebooks
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kserve-crd-waiter
+  namespace: redhat-ods-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kserve-crd-reader
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kserve-crd-reader-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kserve-crd-reader
+subjects:
+  - kind: ServiceAccount
+    name: kserve-crd-waiter
+    namespace: redhat-ods-operator
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wait-for-kserve-crds
+  namespace: redhat-ods-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      serviceAccountName: kserve-crd-waiter
+      restartPolicy: OnFailure
+      containers:
+        - name: waiter
+          image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Wachten tot KServe CRDs zijn geregistreerd door OpenShift AI..."
+              until oc get crd inferenceservices.serving.kserve.io servingruntimes.serving.kserve.io >/dev/null 2>&1; do
+                echo "CRDs nog niet aanwezig, wacht 5 seconden..."
+                sleep 5
+              done
+              echo "KServe CRDs gevonden! Wave 3 kan starten."
