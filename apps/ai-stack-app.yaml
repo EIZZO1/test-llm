@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openshift-ai-lightspeed-stack
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/JOUW-GEBRUIKERSNAAM/JOUW-GITOPS-REPO.git'
+    targetRevision: main
+    path: manifests/ai-stack
+  destination:
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - SkipDryRunOnMissingResource=true # Cruciaal omdat CRD's pas in Wave 1 worden aangemaakt

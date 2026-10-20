@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cpu-llm-api-key
+  namespace: openshift-lightspeed
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+type: Opaque
+stringData:
+  # Dummy key: verplicht veld voor OLS, maar onze lokale CPU-server negeert authenticatie
+  apitoken: "sk-local-cpu-testing-key-12345"
+---
+apiVersion: ols.openshift.io/v1alpha1
+kind: OLSConfig
+metadata:
+  name: cluster
+  namespace: openshift-lightspeed
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  llm:
+    providers:
+      - name: local-openshift-ai-cpu
+        type: openai
+        # De interne KServe Service URL van onze RawDeployment uit Wave 3
+        url: "http://cpu-llm-predictor.llm-cpu-serving.svc.cluster.local:8080/v1"
+        credentialsSecretRef:
+          name: cpu-llm-api-key
+        models:
+          - name: model.gguf
+  ols:
+    defaultModel: model.gguf
+    defaultProvider: local-openshift-ai-cpu
+    logLevel: INFO
+    deployment:
+      replicas: 1
