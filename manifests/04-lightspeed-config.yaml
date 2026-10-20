@@ -23,8 +23,8 @@ spec:
     providers:
       - name: local-openshift-ai-cpu
         type: openai
-        # De interne KServe Service URL van onze RawDeployment uit Wave 3
-        url: "http://cpu-llm-predictor.llm-cpu-serving.svc.cluster.local:8080/v1"
+        # De interne KServe Service URL van onze RawDeployment uit Wave 3 (Service poort 80 stuurt door naar pod 8080)
+        url: "http://cpu-llm-predictor.llm-cpu-serving.svc.cluster.local/v1"
         credentialsSecretRef:
           name: cpu-llm-api-key
         models:

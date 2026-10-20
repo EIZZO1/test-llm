@@ -30,7 +30,7 @@ spec:
   containers:
     - name: kserve-container
       # Officieel llama.cpp server image met ingebouwde OpenAI-compatibele API
-      image: ghcr.io/ggerganov/llama.cpp:server
+      image: ghcr.io/ggml-org/llama.cpp:server
       args:
         - --model
         - /models/model.gguf
