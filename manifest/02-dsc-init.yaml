@@ -1,5 +1,5 @@
 ---
-apiVersion: dscinitialization.opendatahub.io/v2
+apiVersion: dscinitialization.opendatahub.io/v1
 kind: DSCInitialization
 metadata:
   name: default-dsci
@@ -16,7 +16,7 @@ spec:
   trustedCABundle:
     managementState: Managed
 ---
-apiVersion: datasciencecluster.opendatahub.io/v2
+apiVersion: datasciencecluster.opendatahub.io/v1
 kind: DataScienceCluster
 metadata:
   name: default-dsc
