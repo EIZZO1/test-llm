@@ -33,3 +33,19 @@ spec:
         - /metadata/labels
         - /spec/install
         - /status
+    - group: ols.openshift.io
+      kind: OLSConfig
+      jsonPointers:
+        - /status
+        - /spec/audit
+        - /spec/ols/conversationCache
+        - /spec/ols/userDataCollection
+        - /spec/olsDataCollector
+        - /spec/ols/deployment/agenticConsole
+        - /spec/ols/deployment/alertsAdapter
+        - /spec/ols/deployment/console
+        - /spec/ols/deployment/dataCollector
+        - /spec/ols/deployment/database
+        - /spec/ols/deployment/mcpServer
+        - /spec/ols/deployment/otelCollector
+        - /spec/ols/deployment/rhokp/replicas

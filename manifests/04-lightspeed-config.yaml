@@ -34,7 +34,8 @@ spec:
     defaultProvider: local-openshift-ai-cpu
     logLevel: INFO
     deployment:
-      replicas: 1
+      api:
+        replicas: 1
       rhokp:
         resources:
           requests:
