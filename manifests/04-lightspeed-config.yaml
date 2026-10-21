@@ -35,3 +35,9 @@ spec:
     logLevel: INFO
     deployment:
       replicas: 1
+      rhokp:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 256Mi
+            ephemeral-storage: 1Gi

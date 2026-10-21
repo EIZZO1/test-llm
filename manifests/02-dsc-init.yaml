@@ -28,7 +28,7 @@ spec:
     codeflare:
       managementState: Removed
     dashboard:
-      managementState: Managed
+      managementState: Removed
     datasciencepipelines:
       managementState: Removed
     kserve:

@@ -75,6 +75,14 @@ spec:
   name: rhods-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  config:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 4Gi
 ---
 # 4. OpenShift Lightspeed Operator (OLS)
 apiVersion: v1
