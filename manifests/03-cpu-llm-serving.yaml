@@ -34,8 +34,10 @@ spec:
       args:
         - --model
         - /models/model.gguf
+        - --alias
+        - model.gguf
         - --ctx-size
-        - "4096"
+        - "16384"
         - --host
         - "0.0.0.0"
         - --port
